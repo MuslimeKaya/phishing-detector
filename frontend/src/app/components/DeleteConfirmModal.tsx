@@ -36,7 +36,7 @@ export default function DeleteConfirmModal({
                         </h3>
 
                         <p className="text-sm text-gray-500 text-center mb-6">
-                            <span className="font-medium text-gray-700">"{appName}"</span> uygulamasını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
+                            SHA256: <span className="font-mono text-xs text-gray-700">{appName.substring(0, 16)}...</span> uygulamasını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
                         </p>
 
                         <div className="flex gap-3">

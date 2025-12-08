@@ -1,10 +1,15 @@
-import { IsString, IsNotEmpty, IsOptional, Length } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsNotEmpty, Length } from 'class-validator';
 
 export class CreateMaliciousAppDto {
+    @ApiProperty({
+        description: 'The SHA256 hash of the malicious application',
+        example: 'd2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2',
+    })
     @IsString()
     @IsNotEmpty()
-    @Length(1, 255)
-    appName: string;
+    @Length(64, 64, { message: 'SHA256 must be 64 characters long' })
+    sha256: string;
 
     @IsString()
     @IsNotEmpty()
@@ -12,12 +17,7 @@ export class CreateMaliciousAppDto {
     packageName: string;
 
     @IsString()
-    @IsOptional()
-    @Length(1, 50)
-    version?: string;
-
-    @IsString()
-    @IsOptional()
-    @Length(1, 500)
-    detectionReason?: string;
+    @IsNotEmpty()
+    @Length(1, 100)
+    threatType: string;
 }

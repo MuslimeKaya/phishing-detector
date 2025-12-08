@@ -6,7 +6,7 @@ import { MaliciousApp } from '@/app/types';
 interface AppFormModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSubmit: (data: Omit<MaliciousApp, 'id'>) => void;
+    onSubmit: (data: Omit<MaliciousApp, 'id' | 'createdAt' | 'updatedAt'>) => void;
     initialData?: MaliciousApp;
 }
 
@@ -17,26 +17,23 @@ export default function AppFormModal({
     initialData,
 }: AppFormModalProps) {
     const [formData, setFormData] = useState({
-        appName: '',
+        sha256: '',
         packageName: '',
-        version: '',
-        detectionReason: '',
+        threatType: '',
     });
 
     useEffect(() => {
         if (initialData) {
             setFormData({
-                appName: initialData.appName,
-                packageName: initialData.packageName,
-                version: initialData.version,
-                detectionReason: initialData.detectionReason,
+                sha256: initialData.sha256,
+                packageName: initialData.packageName || '',
+                threatType: initialData.threatType,
             });
         } else {
             setFormData({
-                appName: '',
+                sha256: '',
                 packageName: '',
-                version: '',
-                detectionReason: '',
+                threatType: '',
             });
         }
     }, [initialData]);
@@ -62,7 +59,7 @@ export default function AppFormModal({
                     <div className="relative bg-white rounded-2xl p-6">
                         <div className="flex items-center justify-between mb-6">
                             <h3 className="text-2xl font-bold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">
-                                {initialData ? 'Uygulamayı Düzenle' : 'Yeni Uygulama Ekle'}
+                                {initialData ? 'Uygulamayı Düzenle' : 'Yeni Zararlı Uygulama Ekle'}
                             </h3>
                             <button
                                 onClick={onClose}
@@ -77,53 +74,42 @@ export default function AppFormModal({
                         <form onSubmit={handleSubmit} className="space-y-5">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Uygulama Adı
+                                    SHA256 Hash *
                                 </label>
                                 <input
                                     type="text"
                                     required
                                     className="w-full px-4 py-3 border border-gray-400 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all text-black placeholder-gray-500"
-                                    value={formData.appName}
-                                    onChange={(e) => setFormData({ ...formData, appName: e.target.value })}
+                                    value={formData.sha256}
+                                    onChange={(e) => setFormData({ ...formData, sha256: e.target.value })}
+                                    placeholder="Uygulamanın SHA256 hash değeri"
                                 />
                             </div>
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Paket Adı
+                                    Paket Adı (Opsiyonel)
                                 </label>
                                 <input
                                     type="text"
-                                    required
                                     className="w-full px-4 py-3 border border-gray-400 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all text-black placeholder-gray-500"
                                     value={formData.packageName}
                                     onChange={(e) => setFormData({ ...formData, packageName: e.target.value })}
+                                    placeholder="com.example.app"
                                 />
                             </div>
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Versiyon
+                                    Tehdit Türü *
                                 </label>
                                 <input
                                     type="text"
                                     required
                                     className="w-full px-4 py-3 border border-gray-400 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all text-black placeholder-gray-500"
-                                    value={formData.version}
-                                    onChange={(e) => setFormData({ ...formData, version: e.target.value })}
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Tespit Nedeni
-                                </label>
-                                <textarea
-                                    required
-                                    rows={3}
-                                    className="w-full px-4 py-3 border border-gray-400 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all resize-none text-black placeholder-gray-500"
-                                    value={formData.detectionReason}
-                                    onChange={(e) => setFormData({ ...formData, detectionReason: e.target.value })}
+                                    value={formData.threatType}
+                                    onChange={(e) => setFormData({ ...formData, threatType: e.target.value })}
+                                    placeholder="Trojan, Malware, Spyware vb."
                                 />
                             </div>
 

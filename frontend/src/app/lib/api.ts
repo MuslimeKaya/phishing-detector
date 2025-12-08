@@ -1,6 +1,6 @@
 import { MaliciousApp } from '@/app/types';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
 export const api = {
     async getApps(): Promise<MaliciousApp[]> {
@@ -9,7 +9,7 @@ export const api = {
         return res.json();
     },
 
-    async createApp(data: Omit<MaliciousApp, 'id'>): Promise<MaliciousApp> {
+    async createApp(data: Omit<MaliciousApp, 'id' | 'createdAt' | 'updatedAt'>): Promise<MaliciousApp> {
         const res = await fetch(`${API_BASE_URL}/malicious-app`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -19,7 +19,7 @@ export const api = {
         return res.json();
     },
 
-    async updateApp(id: string, data: Partial<Omit<MaliciousApp, 'id'>>): Promise<MaliciousApp> {
+    async updateApp(id: string, data: Partial<Omit<MaliciousApp, 'id' | 'createdAt' | 'updatedAt'>>): Promise<MaliciousApp> {
         const res = await fetch(`${API_BASE_URL}/malicious-app/${id}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },

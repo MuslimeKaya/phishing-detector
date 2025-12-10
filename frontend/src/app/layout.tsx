@@ -5,8 +5,8 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Malicious Apps Admin Panel',
-  description: 'Manage malicious applications',
+  title: 'Phishing Detector Admin Panel',
+  description: 'Manage phishing detection',
 };
 
 export default function RootLayout({
@@ -21,7 +21,7 @@ export default function RootLayout({
           <header className="bg-white shadow-sm border-b">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
               <h1 className="text-2xl font-bold text-gray-900">
-                Malicious Apps Yönetim Paneli
+                Phishing Detector Yönetim Paneli
               </h1>
             </div>
           </header>

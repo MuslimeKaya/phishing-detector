@@ -1,12 +1,18 @@
-import Image from "next/image";
+import PhishingTable from './components/PhishingTable';
 
 export default function Home() {
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold text-gray-800">
-        Phishing Detector
-      </h2>
-      <p>Welcome to the Phishing Detector admin panel.</p>
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          Phishing URL Yönetimi
+        </h2>
+        <p className="text-gray-600">
+          Şüpheli URL'leri kontrol edin ve phishing listesini yönetin.
+        </p>
+      </div>
+
+      <PhishingTable />
     </div>
   );
 }

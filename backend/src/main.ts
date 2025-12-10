@@ -13,7 +13,7 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Phishing Detector API')
-    .setDescription('Phishing ve zararlı uygulama tespiti için API dokümantasyonu')
+    .setDescription('Phishing tespiti için API dokümantasyonu')
     .setVersion('1.0')
     .addTag('Data Fetch (For Testing)', 'Manuel veri çekme endpointleri') // Controller'daki tag'i buraya ekleyebilirsin
     .build();

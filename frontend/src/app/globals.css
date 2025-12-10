@@ -21,3 +21,8 @@ body {
   background-color: rgb(var(--background));
   color: rgb(var(--foreground));
 }
+
+input::placeholder,
+textarea::placeholder {
+  color: #9CA3AF; /* Tailwind's coolGray-400 */
+}

@@ -7,9 +7,8 @@ import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableCors(); // Enable Cross-Origin Resource Sharing
   const logger = new Logger('Bootstrap');
-
-  console.log()
 
   const config = new DocumentBuilder()
     .setTitle('Phishing Detector API')

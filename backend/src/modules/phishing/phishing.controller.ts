@@ -6,6 +6,9 @@ import {
     Param,
     NotFoundException,
     ParseUUIDPipe,
+    Query,
+    ParseIntPipe,
+    DefaultValuePipe,
 } from '@nestjs/common';
 import { PhishingService } from './phishing.service';
 import { CreatePhishingDto } from './dto/create-phishing.dto';
@@ -20,7 +23,7 @@ export class PhishingController {
     create(
         @Body() createPhishingDto: CreatePhishingDto,
     ): Promise<PhishingEntity> {
-        // A global ValidationPipe (to be set in main.ts) will validate the DTO
+
         return this.phishingService.create(createPhishingDto);
     }
 
@@ -34,8 +37,13 @@ export class PhishingController {
     }
 
     @Get()
-    findAll(): Promise<PhishingEntity[]> {
-        return this.phishingService.findAll();
+    findAll(
+        @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+        @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+        @Query('search', new DefaultValuePipe('')) search: string,
+    ): Promise<{ data: PhishingEntity[]; total: number }> {
+        console.log('Fetching phishing data with:', { page, limit, search });
+        return this.phishingService.findAll({ page, limit, search });
     }
 
     @Get(':id')
@@ -47,4 +55,3 @@ export class PhishingController {
         return phishingEntry;
     }
 }
-

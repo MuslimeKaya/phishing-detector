@@ -1,4 +1,4 @@
-import PhishingTable from './components/PhishingTable';
+import ClientPhishingTable from './components/ClientPhishingTable';
 
 export default function Home() {
   return (
@@ -12,7 +12,7 @@ export default function Home() {
         </p>
       </div>
 
-      <PhishingTable />
+      <ClientPhishingTable />
     </div>
   );
 }

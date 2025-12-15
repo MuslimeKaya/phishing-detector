@@ -3,10 +3,19 @@ import { Phishing, CheckPhishingResponse } from '@/app/types';
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
 export const api = {
-    async getPhishingUrls(): Promise<Phishing[]> {
-        const res = await fetch(`${API_BASE_URL}/phishing`);
+    async getPhishingUrls(page = 1, limit = 10, search = ''): Promise<{ data: Phishing[]; total: number }> {
+        const url = new URL(`${API_BASE_URL}/phishing`);
+        url.searchParams.append('page', String(page));
+        url.searchParams.append('limit', String(limit));
+        if (search) {
+            url.searchParams.append('search', search);
+        }
+
+        const res = await fetch(url.toString());
         if (!res.ok) throw new Error('Failed to fetch phishing URLs');
-        return res.json();
+        
+        const result = await res.json();
+        return result;
     },
 
     async createPhishing(data: { url: string; source: string; target: string }): Promise<Phishing> {

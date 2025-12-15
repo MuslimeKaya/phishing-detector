@@ -66,7 +66,7 @@ export default function PhishingFormModal({
                                 <input
                                     type="url"
                                     required
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-black"
                                     value={formData.url}
                                     onChange={(e) => setFormData({ ...formData, url: e.target.value })}
                                     placeholder="https://example.com"
@@ -80,7 +80,7 @@ export default function PhishingFormModal({
                                 <input
                                     type="text"
                                     required
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-black"
                                     value={formData.source}
                                     onChange={(e) => setFormData({ ...formData, source: e.target.value })}
                                     placeholder="Manuel, PhishTank, vb."
@@ -94,7 +94,7 @@ export default function PhishingFormModal({
                                 <input
                                     type="text"
                                     required
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-black"
                                     value={formData.target}
                                     onChange={(e) => setFormData({ ...formData, target: e.target.value })}
                                     placeholder="PayPal, Amazon, vb."

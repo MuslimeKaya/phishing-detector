@@ -58,7 +58,7 @@ export default function ClientPhishingTable() {
             loadPhishingData(); // Refresh data
         } catch (error) {
             console.error('Create error:', error);
-            alert('URL zaten mevcut veya bir hata oluştu!');
+            alert('URL already exists or an error occurred!');
         }
     };
 
@@ -72,7 +72,7 @@ export default function ClientPhishingTable() {
             setCheckResult(result);
         } catch (error) {
             console.error('Failed to check URL:', error);
-            alert('URL kontrolü sırasında bir hata oluştu.');
+            alert('An error occurred while checking the URL.');
         } finally {
             setIsChecking(false);
         }
@@ -96,7 +96,7 @@ export default function ClientPhishingTable() {
             loadPhishingData(); // Refresh data
         } catch (error) {
             console.error('Delete error:', error);
-            alert('URL silinirken bir hata oluştu.');
+            alert('An error occurred while deleting the URL.');
         }
     };
 

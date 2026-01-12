@@ -46,7 +46,7 @@ export default function PhishingFormModal({
                     <div className="relative bg-white rounded-2xl p-6">
                         <div className="flex items-center justify-between mb-6">
                             <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-                                Yeni Phishing URL Ekle
+                                Add New Phishing URL
                             </h3>
                             <button
                                 onClick={onClose}
@@ -75,7 +75,7 @@ export default function PhishingFormModal({
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Kaynak *
+                                    Source *
                                 </label>
                                 <input
                                     type="text"
@@ -83,13 +83,13 @@ export default function PhishingFormModal({
                                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-black"
                                     value={formData.source}
                                     onChange={(e) => setFormData({ ...formData, source: e.target.value })}
-                                    placeholder="Manuel, PhishTank, vb."
+                                    placeholder="Manual, PhishTank, etc."
                                 />
                             </div>
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Hedef *
+                                    Target *
                                 </label>
                                 <input
                                     type="text"
@@ -97,7 +97,7 @@ export default function PhishingFormModal({
                                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-black"
                                     value={formData.target}
                                     onChange={(e) => setFormData({ ...formData, target: e.target.value })}
-                                    placeholder="PayPal, Amazon, vb."
+                                    placeholder="PayPal, Amazon, etc."
                                 />
                             </div>
 
@@ -107,13 +107,13 @@ export default function PhishingFormModal({
                                     onClick={onClose}
                                     className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors font-medium"
                                 >
-                                    İptal
+                                    Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     className="flex-1 px-4 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-xl hover:shadow-lg transform hover:-translate-y-0.5 transition-all font-medium"
                                 >
-                                    Ekle
+                                    Add
                                 </button>
                             </div>
                         </form>

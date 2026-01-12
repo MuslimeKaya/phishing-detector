@@ -1,7 +1,9 @@
-import { Logger, Module } from '@nestjs/common';
+import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { PhishingModule } from './modules/phishing/phishing.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { LoggingMiddleware } from './middlewares/logging/logging.middleware';
+import { RateLimitMiddleware } from './middlewares/rate-limit/rate-limit.middleware';
 
 
 @Module({
@@ -21,7 +23,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
                     database: configService.get<string>('DB_DATABASE'),
                     name: 'default',
                     autoLoadEntities: true,
-                    synchronize: true, // Be cautious with this in production
+                    synchronize: true,
                     retryAttempts: 10,
                 };
                 Logger.log(
@@ -38,4 +40,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     controllers: [],
     providers: [],
 })
-export class AppModule { }
+export class AppModule implements NestModule {
+    configure(consumer: MiddlewareConsumer) {
+        consumer.apply(RateLimitMiddleware, LoggingMiddleware).forRoutes('phishing');
+    }
+}

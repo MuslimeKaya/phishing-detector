@@ -42,13 +42,12 @@ export class PhishingController {
         @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
         @Query('search', new DefaultValuePipe('')) search: string,
     ): Promise<{ data: PhishingEntity[]; total: number }> {
-        console.log('Fetching phishing data with:', { page, limit, search });
         return this.phishingService.findAll({ page, limit, search });
     }
 
     @Get(':id')
     async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<PhishingEntity> {
-        const phishingEntry = await this.phishingService.findOne(id);
+        const phishingEntry: PhishingEntity | null = await this.phishingService.findOne(id);
         if (!phishingEntry) {
             throw new NotFoundException(`Phishing entry with ID '${id}' not found.`);
         }

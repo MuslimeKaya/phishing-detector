@@ -9,7 +9,7 @@ export class PhishingService {
   constructor(
     @InjectRepository(PhishingEntity)
     private readonly phishingRepository: Repository<PhishingEntity>,
-  ) {}
+  ) { }
 
   async create(createPhishingDto: CreatePhishingDto): Promise<PhishingEntity> {
     const newPhishingEntry = this.phishingRepository.create(createPhishingDto);
@@ -30,14 +30,14 @@ export class PhishingService {
     search?: string;
   }): Promise<{ data: PhishingEntity[]; total: number }> {
     const { page = 1, limit = 10, search = '' } = options;
-    const skip = (page - 1) * limit;
+    const skip: number = (page - 1) * limit;
 
     const whereConditions = search
       ? [
-          { url: ILike(`%${search}%`) },
-          { source: ILike(`%${search}%`) },
-          { target: ILike(`%${search}%`) },
-        ]
+        { url: ILike(`%${search}%`) },
+        { source: ILike(`%${search}%`) },
+        { target: ILike(`%${search}%`) },
+      ]
       : [];
 
     const [data, total] = await this.phishingRepository.findAndCount({

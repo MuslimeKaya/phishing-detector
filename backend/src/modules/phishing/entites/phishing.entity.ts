@@ -19,10 +19,12 @@ export class PhishingEntity {
   @Column()
   source: string;
 
-  // @Index()
-  // @Column()
-  // target: string;
+  @Index()
+  @Column({ nullable: true })
+  target: string;
 
   @CreateDateColumn()
   createdAt: Date;
+
+
 }

@@ -4,27 +4,32 @@ import {
   Column,
   CreateDateColumn,
   Index,
+  PrimaryColumn,
 } from 'typeorm';
 
-@Entity({ name: 'phishing' })
+@Entity({ name: 'verified_online' })
 export class PhishingEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryColumn({ name: 'phish_id', type: 'integer' })
+  id: number;
 
-  @Index()
-  @Column({ unique: true })
+  @Column()
   url: string;
 
-  @Index()
-  @Column()
-  source: string;
+  @Column({ name: 'phish_detail_url', nullable: true })
+  phishDetailUrl: string;
 
-  @Index()
+  @Column({ name: 'submission_time', nullable: true })
+  submissionTime: string;
+
+  @Column({ nullable: true })
+  verified: string;
+
+  @Column({ name: 'verification_time', nullable: true })
+  verificationTime: string;
+
+  @Column({ nullable: true })
+  online: string;
+
   @Column({ nullable: true })
   target: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-
 }

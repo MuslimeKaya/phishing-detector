@@ -1,9 +1,12 @@
 export interface Phishing {
-    id: string;
+    id: string; // phish_id mapped to id in backend
     url: string;
-    source: string;
+    phishDetailUrl: string;
+    submissionTime: string;
+    verified: string;
+    verificationTime: string;
+    online: string;
     target: string;
-    createdAt: string;
 }
 
 export interface CheckPhishingResponse {

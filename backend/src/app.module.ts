@@ -4,10 +4,17 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LoggingMiddleware } from './middlewares/logging/logging.middleware';
 import { RateLimitMiddleware } from './middlewares/rate-limit/rate-limit.middleware';
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
+import { SentryModule } from '@sentry/nestjs/setup';
+
 
 
 @Module({
     imports: [
+        SentryModule.forRoot(),
+        PrometheusModule.register({
+            path: '/metrics',
+        }),
         ConfigModule.forRoot({
             isGlobal: true,
         }),
@@ -23,9 +30,10 @@ import { RateLimitMiddleware } from './middlewares/rate-limit/rate-limit.middlew
                     database: configService.get<string>('DB_DATABASE'),
                     name: 'default',
                     autoLoadEntities: true,
-                    synchronize: true,
+                    synchronize: false,
                     retryAttempts: 10,
                 };
+
                 Logger.log(
                     `Connecting to database: host=${dbConfig.host} port=${dbConfig.port} db=${dbConfig.database}`,
                     'TypeOrmModule',
@@ -36,6 +44,7 @@ import { RateLimitMiddleware } from './middlewares/rate-limit/rate-limit.middlew
         }),
 
         PhishingModule,
+
     ],
     controllers: [],
     providers: [],

@@ -1,21 +1,22 @@
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Phishing } from '@/app/types';
 import { api } from '@/app/lib/api';
 import { useDebounce } from '@/app/lib/hooks/useDebounce';
 import PhishingTable from './PhishingTable';
+import DashboardStats from './DashboardStats';
+import { toast } from 'sonner';
 
 export default function ClientPhishingTable() {
     const [phishingData, setPhishingData] = useState<{ data: Phishing[]; total: number }>({ data: [], total: 0 });
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(true);
-    const [isChecking, setIsChecking] = useState(false);
-    const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-    const [checkUrl, setCheckUrl] = useState('');
-    const [checkResult, setCheckResult] = useState<{ isPhishing: boolean; details: Phishing | null } | null>(null);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<Phishing | null>(null);
+
+
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState(10);
@@ -26,13 +27,13 @@ export default function ClientPhishingTable() {
     const loadPhishingData = useCallback(async () => {
         try {
             setLoading(true);
-            console.log(`Fetching data for page: ${currentPage}, limit: ${limit}, search: ${debouncedSearchTerm}`);
             const data = await api.getPhishingUrls(currentPage, limit, debouncedSearchTerm);
             if (data && Array.isArray(data.data)) {
                 setPhishingData(data);
+
+                setSelectedIds([]);
             } else {
                 setPhishingData({ data: [], total: 0 });
-                console.error("API returned data in an unexpected format:", data);
             }
         } catch (error) {
             console.error('Failed to load phishing data:', error);
@@ -46,37 +47,9 @@ export default function ClientPhishingTable() {
         loadPhishingData();
     }, [loadPhishingData]);
 
-    // Reset to page 1 when search term changes
     useEffect(() => {
         setCurrentPage(1);
     }, [debouncedSearchTerm]);
-
-    const handleCreate = async (data: { url: string; source: string; target: string }) => {
-        try {
-            await api.createPhishing(data);
-            setIsFormModalOpen(false);
-            loadPhishingData(); // Refresh data
-        } catch (error) {
-            console.error('Create error:', error);
-            alert('URL already exists or an error occurred!');
-        }
-    };
-
-    const handleCheck = async () => {
-        if (!checkUrl) return;
-        setIsChecking(true);
-        setCheckResult(null);
-        try {
-
-            const result = await api.checkPhishing(checkUrl);
-            setCheckResult(result);
-        } catch (error) {
-            console.error('Failed to check URL:', error);
-            alert('An error occurred while checking the URL.');
-        } finally {
-            setIsChecking(false);
-        }
-    };
 
     const handleOpenDeleteModal = (item: Phishing) => {
         setItemToDelete(item);
@@ -91,25 +64,76 @@ export default function ClientPhishingTable() {
     const handleConfirmDelete = async () => {
         if (!itemToDelete) return;
         try {
-            await (api as any).deletePhishing(itemToDelete.id);
+            await api.deletePhishing(itemToDelete.id);
             handleCloseDeleteModal();
-            loadPhishingData(); // Refresh data
+            loadPhishingData();
+            toast.success('Phishing record deleted successfully!');
         } catch (error) {
             console.error('Delete error:', error);
-            alert('An error occurred while deleting the URL.');
+            toast.error('Failed to delete record.');
         }
     };
 
-    const handleNextPage = () => {
-        if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
+
+    const handleToggleSelect = (id: string) => {
+        setSelectedIds(prev =>
+            prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+        );
+    };
+
+    const handleSelectAll = (ids: string[]) => {
+
+        const allVisibleSelected = ids.every(id => selectedIds.includes(id));
+        if (allVisibleSelected) {
+            setSelectedIds(prev => prev.filter(id => !ids.includes(id)));
+        } else {
+
+            const toAdd = ids.filter(id => !selectedIds.includes(id));
+            setSelectedIds(prev => [...prev, ...toAdd]);
         }
+    };
+
+    const handleBulkDelete = async () => {
+        if (!confirm(`Are you sure you want to delete ${selectedIds.length} items?`)) return;
+
+        try {
+
+            await Promise.all(selectedIds.map(id => api.deletePhishing(id)));
+
+            setSelectedIds([]);
+            loadPhishingData();
+            toast.success(`${selectedIds.length} items deleted successfully!`);
+        } catch (error) {
+            console.error('Bulk delete error:', error);
+            toast.error('Failed to delete some items.');
+            loadPhishingData();
+        }
+    };
+
+    const total = phishingData?.total || 0;
+
+    const recentCount = useMemo(() => {
+        return (phishingData?.data || []).filter(p => {
+            const d = new Date(p.submissionTime);
+            const now = new Date();
+            return (now.getTime() - d.getTime()) < 24 * 60 * 60 * 1000;
+        }).length;
+    }, [phishingData]);
+
+    const topTarget = useMemo(() => {
+        const targets = (phishingData?.data || []).map(p => p.target);
+        if (targets.length === 0) return 'N/A';
+        return targets.sort((a, b) =>
+            targets.filter(v => v === a).length - targets.filter(v => v === b).length
+        ).pop() || 'N/A';
+    }, [phishingData]);
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages) setCurrentPage(currentPage + 1);
     };
 
     const handlePreviousPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
+        if (currentPage > 1) setCurrentPage(currentPage - 1);
     };
 
     const handleLimitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -118,31 +142,31 @@ export default function ClientPhishingTable() {
     };
 
     return (
-        <PhishingTable
-            phishingData={phishingData}
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            loading={loading}
-            isFormModalOpen={isFormModalOpen}
-            isChecking={isChecking}
-            checkUrl={checkUrl}
-            setCheckUrl={setCheckUrl}
-            checkResult={checkResult}
-            handleCheck={handleCheck}
-            setIsFormModalOpen={setIsFormModalOpen}
-            handleCreate={handleCreate}
-            isDeleteModalOpen={isDeleteModalOpen}
-            itemToDelete={itemToDelete}
-            handleOpenDeleteModal={handleOpenDeleteModal}
-            handleCloseDeleteModal={handleCloseDeleteModal}
-            handleConfirmDelete={handleConfirmDelete}
-            currentPage={currentPage}
-            limit={limit}
-            totalPages={totalPages}
-            handleNextPage={handleNextPage}
-            handlePreviousPage={handlePreviousPage}
-            handleLimitChange={handleLimitChange}
-            loadPhishingData={loadPhishingData}
-        />
+        <div className="space-y-6">
+            <DashboardStats total={total} recentCount={recentCount} topTarget={topTarget} />
+
+            <PhishingTable
+                phishingData={phishingData}
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+                loading={loading}
+                isDeleteModalOpen={isDeleteModalOpen}
+                itemToDelete={itemToDelete}
+                handleOpenDeleteModal={handleOpenDeleteModal}
+                handleCloseDeleteModal={handleCloseDeleteModal}
+                handleConfirmDelete={handleConfirmDelete}
+                currentPage={currentPage}
+                limit={limit}
+                totalPages={totalPages}
+                handleNextPage={handleNextPage}
+                handlePreviousPage={handlePreviousPage}
+                handleLimitChange={handleLimitChange}
+                loadPhishingData={loadPhishingData}
+                selectedIds={selectedIds}
+                onToggleSelect={handleToggleSelect}
+                onSelectAll={handleSelectAll}
+                onBulkDelete={handleBulkDelete}
+            />
+        </div>
     );
 }

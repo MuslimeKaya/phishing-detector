@@ -5,8 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PhishingEntity } from './entites/phishing.entity';
 
 
+
 @Module({
-  imports: [TypeOrmModule.forFeature([PhishingEntity])],
+  imports: [
+    TypeOrmModule.forFeature([PhishingEntity]),
+  ],
   providers: [PhishingService],
   controllers: [PhishingController],
   exports: [PhishingService]

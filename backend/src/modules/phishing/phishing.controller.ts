@@ -9,11 +9,12 @@ import {
     Query,
     ParseIntPipe,
     DefaultValuePipe,
+    Delete,
 } from '@nestjs/common';
 import { PhishingService } from './phishing.service';
 import { CreatePhishingDto } from './dto/create-phishing.dto';
 import { PhishingEntity } from './entites/phishing.entity';
-import { CheckPhishingDto } from './dto/check-phishing.dto';
+
 
 @Controller('phishing')
 export class PhishingController {
@@ -23,18 +24,10 @@ export class PhishingController {
     create(
         @Body() createPhishingDto: CreatePhishingDto,
     ): Promise<PhishingEntity> {
-
         return this.phishingService.create(createPhishingDto);
     }
 
-    @Post('check')
-    async checkUrl(@Body() checkPhishingDto: CheckPhishingDto) {
-        const found = await this.phishingService.findByUrl(checkPhishingDto.url);
-        return {
-            isPhishing: !!found,
-            details: found || null,
-        };
-    }
+
 
     @Get()
     findAll(
@@ -46,11 +39,16 @@ export class PhishingController {
     }
 
     @Get(':id')
-    async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<PhishingEntity> {
+    async findOne(@Param('id', ParseIntPipe) id: number): Promise<PhishingEntity> {
         const phishingEntry: PhishingEntity | null = await this.phishingService.findOne(id);
         if (!phishingEntry) {
             throw new NotFoundException(`Phishing entry with ID '${id}' not found.`);
         }
         return phishingEntry;
+    }
+
+    @Delete(':id')
+    async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+        return this.phishingService.delete(id);
     }
 }

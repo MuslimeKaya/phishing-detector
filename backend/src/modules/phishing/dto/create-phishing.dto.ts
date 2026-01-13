@@ -5,9 +5,7 @@ export class CreatePhishingDto {
     @IsNotEmpty()
     url!: string;
 
-    @IsString()
-    @IsNotEmpty()
-    source!: string;
+
 
     @IsString()
     @IsNotEmpty()

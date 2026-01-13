@@ -13,15 +13,19 @@ export const api = {
 
         const res = await fetch(url.toString());
         if (!res.ok) throw new Error('Failed to fetch phishing URLs');
-        
+
         const result = await res.json();
         return result;
     },
 
-    async createPhishing(data: { url: string; source: string; target: string }): Promise<Phishing> {
+    async createPhishing(data: { url: string; target: string }): Promise<Phishing> {
+        const headers: HeadersInit = {
+            'Content-Type': 'application/json',
+        };
+
         const res = await fetch(`${API_BASE_URL}/phishing`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers,
             body: JSON.stringify(data),
         });
         if (!res.ok) throw new Error('Failed to create phishing entry');
@@ -42,5 +46,12 @@ export const api = {
         const res = await fetch(`${API_BASE_URL}/phishing/${id}`);
         if (!res.ok) throw new Error('Failed to fetch phishing entry');
         return res.json();
+    },
+
+    async deletePhishing(id: string): Promise<void> {
+        const res = await fetch(`${API_BASE_URL}/phishing/${id}`, {
+            method: 'DELETE',
+        });
+        if (!res.ok) throw new Error('Failed to delete phishing entry');
     }
 };
